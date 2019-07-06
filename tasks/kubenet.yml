@@ -1,12 +1,12 @@
 - name: Get route table
   azure_rm_routetable_facts:
       resource_group: "{{ resource_group_secondary }}"
-  register: routetable
+  register: __routetable
 
 - name: Get network security group
   azure_rm_securitygroup_facts:
       resource_group: "{{ resource_group_secondary }}"
-  register: nsg
+  register: __nsg
 
 - name: Parse subnet id
   set_fact:
@@ -23,5 +23,5 @@
       name: "{{ subnet_name[0] }}"
       resource_group: "{{  subnet_rg[0] }}"
       virtual_network_name: "{{ subnet_vn[0] }}"
-      security_group: "{{ nsg.ansible_facts.azure_securitygroups[0].id }}"
-      route_table: "{{ routetable.route_tables[0].id }}"
+      security_group: "{{ __nsg.ansible_facts.azure_securitygroups[0].id }}"
+      route_table: "{{ __routetable.route_tables[0].id }}"

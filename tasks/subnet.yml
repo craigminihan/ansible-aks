@@ -1,7 +1,7 @@
 - name: Create vnet
   azure_rm_virtualnetwork:
       resource_group: "{{ resource_group }}"
-      name: "{{ name }}{{ rpfx }}"
+      name: "{{ name }}{{ __rsfx }}"
       address_prefixes_cidr:
           - 10.0.0.0/8
 
@@ -10,9 +10,9 @@
       resource_group: "{{ resource_group }}"
       name: "{{ subnet_name }}"
       address_prefix_cidr: "{{ address }}"
-      virtual_network_name: "{{ name }}{{ rpfx }}"
-  register: subnet
+      virtual_network_name: "{{ name }}{{ __rsfx }}"
+  register: __subnet
 
 - name: Set subnet id
   set_fact:
-      "{{ parameter }}": "{{ subnet.state.id }}"
+      "{{ parameter }}": "{{ __subnet.state.id }}"

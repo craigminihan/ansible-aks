@@ -6,12 +6,12 @@
   azure_rm_aks_facts:
       name: "{{ name }}"
       resource_group: "{{ resource_group }}"
-  register: aks_facts
+  register: __aks_facts
 
 - include_tasks: facts/main.yml
-  when: aks_facts.aks | length == 1
+  when: __aks_facts.aks | length == 1
   vars:
-    aks: "{{ aks_facts.aks[0] }}"
+    aks: "{{ __aks_facts.aks[0] }}"
 
 - name: Apply original value to unset parameters
   set_fact:
@@ -21,7 +21,7 @@
 
 - name: Prepare random suffix
   set_fact:
-      rpfx: "{{ resource_group | hash('md5') | truncate(5, True, '') }}"
+      __rsfx: "{{ resource_group | hash('md5') | truncate(5, True, '') }}"
 
 # Monitoring enabled
 - name: Get or create log analytics workspace for monitoring
@@ -39,7 +39,7 @@
   include_tasks: subnet.yml
   vars:
       address: 10.240.0.0/16
-      subnet_name: "{{ name }}{{ rpfx }}"
+      subnet_name: "{{ name }}{{ __rsfx }}"
       parameter: "vnet_subnet_id"
   when: virtual_node is defined and virtual_node and vnet_subnet_id is not defined
 
@@ -47,7 +47,7 @@
   include_tasks: subnet.yml
   vars:
       address: 10.241.0.0/16
-      subnet_name: "{{ name }}{{ rpfx }}virtualnode"
+      subnet_name: "{{ name }}{{ __rsfx }}virtualnode"
       parameter: virtual_node_subnet_id
   when: virtual_node is defined and virtual_node and virtual_node_subnet_id is not defined
 
@@ -66,7 +66,7 @@
   include_tasks: subnet.yml
   vars:
       address: 10.240.0.0/16
-      subnet_name: "{{ name }}{{ rpfx }}"
+      subnet_name: "{{ name }}{{ __rsfx }}"
       parameter: "vnet_subnet_id"
   when: network_plugin is defined
 
